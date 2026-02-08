@@ -6,7 +6,7 @@ public:
             if (abs(nums[i]) < abs(closest)){
                 closest = nums[i];
             }
-            else if (abs(nums[i] == abs(closest) && nums[i] > closest)){
+            else if (abs(nums[i]) == abs(closest) && nums[i] > closest){
                 closest = nums[i];
             }
         }
