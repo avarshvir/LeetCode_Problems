@@ -15,7 +15,7 @@ public:
                 currentWealth += accounts[i][j]; // add money from each bank
             }
 
-            maxWealth = max(maxWealth, currentWealth); // U=update treasure chest if this customer is richer
+            maxWealth = max(maxWealth, currentWealth); // update wealth if this customer is richer
         }
 
         return maxWealth; // return richest customer's wealth
