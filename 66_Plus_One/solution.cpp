@@ -4,7 +4,7 @@ public:
         for(int i = digits.size() - 1; i >= 0; i--){
             if(digits[i] < 9){
                 digits[i]++;
-                return true;
+                return digits;
             }
             digits[i] = 0;
         }
