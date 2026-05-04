@@ -32,3 +32,57 @@ Array Partition
 905. Sort Array By Parity
 485. Max Consecutive Ones
 796. Rotate String
+---
+    elif TESTING_MODE == "JSON":
+        logger.info("JSON Mode: Loading JSON test cases")
+        flat_cases = []
+
+        # Loop through the JSON file
+        for tc in test_cases:
+            
+            # FORMAT 1: Explicit human-written questions (e.g., test_cases_manual.json)
+            if tc.get("question"):
+                exp_ans = tc.get("expected_answer", "")
+                delim = '#' if '#' in exp_ans else ','
+                tokens = [t.strip().strip('"').strip("'") for t in exp_ans.split(delim) if t.strip()]
+
+                flat_cases.append({
+                    "test_name": tc["test_name"],
+                    "baseline_test_name": tc["test_name"],
+                    "initial_queries": [tc["question"]], # <--- Passes the exact question
+                    "expected_answers": [exp_ans],
+                    "expected_answer_tokens": tokens,
+                    "probe_context": tc.get("probe_context", PROBE_CONTEXT_DEFAULT or ""),
+                    "username": tc.get("username"),
+                    "password": tc.get("password"),
+                    "compare_mode": tc.get("compare_mode", COMPARISON_MODE),
+                    "baseline_path": tc.get("baseline_path", BASELINE_PATH),
+                })
+
+            # FORMAT 2: Keyword-only auto-generation (e.g., test_cases.json)
+            elif tc.get("keywords"):
+                logger.info(f"JSON Mode: Auto-generating questions for '{tc['test_name']}' from keywords...")
+                
+                # Import the standalone generator tool dynamically
+                from question_generator import generate_json_mode
+                from config import NUM_INITIAL_QUERIES, TEST_QUESTIONS_JSON
+                
+                # Force the generator to write the questions using the LLM
+                generated_rows = generate_json_mode(TEST_QUESTIONS_JSON, NUM_INITIAL_QUERIES)
+                
+                # Take the LLM-generated questions and map them to our flat_cases list
+                for gen_test_name, generated_question in generated_rows:
+                    if gen_test_name == tc["test_name"]:
+                        flat_cases.append({
+                            "test_name": tc["test_name"],
+                            "baseline_test_name": tc["test_name"],
+                            "initial_queries": [generated_question], # <--- Passes the AI-generated question!
+                            "expected_answers": [], # Blank, just like generator.csv
+                            "expected_answer_tokens": [],
+                            "probe_context": tc.get("probe_context", PROBE_CONTEXT_DEFAULT or ""),
+                            "compare_mode": tc.get("compare_mode", COMPARISON_MODE),
+                            "baseline_path": tc.get("baseline_path", BASELINE_PATH),
+                        })
+
+        test_cases = flat_cases
+        logger.info(f"JSON Mode: Successfully loaded and generated {len(test_cases)} total questions.")
