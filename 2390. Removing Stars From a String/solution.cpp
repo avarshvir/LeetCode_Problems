@@ -2,7 +2,7 @@ class Solution {
 public:
     string removeStars(string s){
         stack<char> c;
-        for(auto i: c){
+        for(auto i: s){
             c.push(i);
             if(i == '*'){
                 c.pop();
