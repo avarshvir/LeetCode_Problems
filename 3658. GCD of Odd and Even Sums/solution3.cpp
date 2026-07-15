@@ -1,4 +1,4 @@
-class Solution {
+clsclass Solution {
 public:
     int gcdOfOddEvenSums(int n) {
         int sumOdd = 0;
